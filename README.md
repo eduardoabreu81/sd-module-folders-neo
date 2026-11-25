@@ -50,12 +50,9 @@ https://github.com/eduardoabreu81/sd-module-folders-neo
 
 In **Settings** → **Module Folders**:
 
-| Setting | Default | What it does |
-| :--- | :--- | :--- |
-| Group the VAE / Text Encoder dropdown | On | Off gives Forge's own list back |
-| Label of the text encoder group | `TE` | `TE` or `Text Encoder` |
+- **Group the VAE / Text Encoder dropdown** (on by default): off gives Forge's own list back.
 
-Changes show up with the dropdown's **refresh** button (🔄) or on the next page load.
+The change shows up with the dropdown's **refresh** button (🔄) or on the next page load.
 
 Forge's own **Settings** → **UI Alternatives** → **Show filenames without folder in the VAE / Text Encoder dropdown** still decides whether the folder is shown: with it on, the labels read `VAE · ae.safetensors`; the order stays grouped and by folder either way. That setting needs **Reload UI**.
 

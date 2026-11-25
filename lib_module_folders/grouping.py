@@ -10,10 +10,7 @@ import os
 VAE, TEXT_ENCODER, OTHER = "vae", "text_encoder", "other"
 GROUP_ORDER = (VAE, TEXT_ENCODER, OTHER)
 
-LABELS = {
-    "short": {VAE: "VAE", TEXT_ENCODER: "TE", OTHER: "?"},
-    "long": {VAE: "VAE", TEXT_ENCODER: "Text Encoder", OTHER: "?"},
-}
+LABELS = {VAE: "VAE", TEXT_ENCODER: "TE", OTHER: "?"}
 SEPARATOR = " · "
 
 
@@ -57,19 +54,18 @@ def ordered(module_list, module_map, vae_roots, text_encoder_roots):
     return [(filename, kind) for _, _, filename, kind in entries]
 
 
-def label(kind, shown, style="short"):
+def label(kind, shown):
     """The text the dropdown shows: the group, then the name Forge would show, with forward slashes."""
-    prefix = LABELS.get(style, LABELS["short"])[kind]
-    return f"{prefix}{SEPARATOR}{shown.replace(chr(92), '/')}"
+    return f"{LABELS[kind]}{SEPARATOR}{shown.replace(chr(92), '/')}"
 
 
-def choices(order, module_map, use_short, style="short"):
+def choices(order, module_map, use_short):
     """Gradio (label, value) pairs. The value is exactly what Forge itself puts in the dropdown (the filename, or the
     path relative to its folder), so saved presets, the API and Forge's own handlers keep working unchanged."""
     out = []
     for filename, kind in order:
         value = filename if use_short else module_map.get(filename, filename)
-        out.append((label(kind, value, style), value))
+        out.append((label(kind, value), value))
     return out
 
 

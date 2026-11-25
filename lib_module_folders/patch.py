@@ -24,14 +24,13 @@ def _roots(paths, cmd_opts):
     return vae, text_encoder
 
 
-def grouped_refresh(main_entry, original, shared, paths, settings):
-    """The replacement for refresh_models. settings() -> (enabled, label style)."""
+def grouped_refresh(main_entry, original, shared, paths, enabled):
+    """The replacement for refresh_models. enabled() -> whether to group the list."""
 
     def refresh_models(*args, **kwargs):
         result = original(*args, **kwargs)
         try:
-            enabled, style = settings()
-            if not enabled:
+            if not enabled():
                 return result
             ckpt_list, _ = result
             vae_roots, te_roots = _roots(paths, shared.cmd_opts)
@@ -39,7 +38,7 @@ def grouped_refresh(main_entry, original, shared, paths, settings):
             grouping.reorder_in_place(main_entry.module_list, order)
             grouping.reorder_in_place(main_entry.module_map, order)
             use_short = bool(getattr(shared.opts, "sd_modules_dropdown_use_short", True))
-            return ckpt_list, grouping.choices(order, main_entry.module_map, use_short, style)
+            return ckpt_list, grouping.choices(order, main_entry.module_map, use_short)
         except Exception as exc:  # never break Forge's model list
             logger.warning("Module Folders: keeping Forge's own VAE / Text Encoder list (%s: %s)", type(exc).__name__, exc)
             return result
@@ -49,12 +48,12 @@ def grouped_refresh(main_entry, original, shared, paths, settings):
     return refresh_models
 
 
-def install(main_entry, shared, paths, settings):
+def install(main_entry, shared, paths, enabled):
     """Replace main_entry.refresh_models once; a UI reload re-imports the script and must not wrap the wrapper."""
     current = getattr(main_entry, "refresh_models", None)
     if current is None:
         logger.warning("Module Folders: this Forge has no main_entry.refresh_models; the dropdown stays as it is")
         return False
     original = getattr(current, ATTR_ORIGINAL, current)
-    main_entry.refresh_models = grouped_refresh(main_entry, original, shared, paths, settings)
+    main_entry.refresh_models = grouped_refresh(main_entry, original, shared, paths, enabled)
     return True

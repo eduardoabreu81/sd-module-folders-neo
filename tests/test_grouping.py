@@ -70,8 +70,8 @@ class GroupingTests(unittest.TestCase):
         full = grouping.choices(order, self.module_map, use_short=False)
         self.assertEqual(full[1], ("VAE · flux/ae.safetensors", os.path.normpath("flux/ae.safetensors")))
         self.assertEqual(sorted(value for _, value in full), sorted(self.module_map.values()))
-        short = grouping.choices(order, self.module_map, use_short=True, style="long")
-        self.assertEqual(short[6], ("Text Encoder · clip_l.safetensors", "clip_l.safetensors"))
+        short = grouping.choices(order, self.module_map, use_short=True)
+        self.assertEqual(short[6], ("TE · clip_l.safetensors", "clip_l.safetensors"))
         self.assertEqual(sorted(value for _, value in short), sorted(self.module_list))
 
     def test_extra_folders_and_nested_folders(self):
@@ -110,7 +110,7 @@ class PatchTests(unittest.TestCase):
         self.enabled = True
 
     def install(self):
-        return patch.install(self.main_entry, self.shared, self.paths, lambda: (self.enabled, "short"))
+        return patch.install(self.main_entry, self.shared, self.paths, lambda: self.enabled)
 
     def test_the_wrapper_groups_and_reorders_forges_dicts(self):
         self.assertTrue(self.install())
